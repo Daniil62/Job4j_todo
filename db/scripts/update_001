@@ -1,0 +1,7 @@
+create table if not exists items(
+    id serial primary key,
+    header varchar not null,
+    description text not null unique,
+    created timestamp not null,
+    done bool
+);
