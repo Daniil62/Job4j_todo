@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.job4j.todo.model.Item;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.ItemService;
 
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 @Controller
@@ -21,7 +23,8 @@ public class ItemController {
     }
 
     @GetMapping("/index/{status}")
-    public String getItems(@PathVariable("status") int status, Model model) {
+    public String getItems(@PathVariable("status") int status, Model model, HttpSession session) {
+        addUserAttribute(model, session);
         switch (status) {
             case 0 :
                 model.addAttribute("items", service.getUnperformed());
@@ -38,13 +41,15 @@ public class ItemController {
     }
 
     @GetMapping("/addItemForm")
-    public String addItem(Model model) {
+    public String addItem(Model model, HttpSession session) {
+        addUserAttribute(model, session);
         model.addAttribute("item", new Item());
         return "addItemForm";
     }
 
     @PostMapping("/createItem")
-    public String createItem(@ModelAttribute Item item, Model model) {
+    public String createItem(@ModelAttribute Item item, Model model, HttpSession session) {
+        addUserAttribute(model, session);
         service.create(item);
         model.addAttribute("items", service.getUnperformed());
         model.addAttribute("list", "new");
@@ -52,7 +57,9 @@ public class ItemController {
     }
 
     @GetMapping("/itemDetails/{itemId}")
-    public String itemDetails(Model model, @PathVariable("itemId") long id) {
+    public String itemDetails(Model model, @PathVariable("itemId") long id,
+                              HttpSession session) {
+        addUserAttribute(model, session);
         String result = "index";
         Optional<Object> optionalItem = service.findById(id);
         if (optionalItem.isPresent()) {
@@ -65,7 +72,9 @@ public class ItemController {
     @GetMapping("/editItemForm/{itemId}/{previous}")
     public String editItem(Model model,
                            @PathVariable("previous") String previous,
-                           @PathVariable("itemId") long id) {
+                           @PathVariable("itemId") long id,
+                           HttpSession session) {
+        addUserAttribute(model, session);
         String result = "editItemForm";
         Optional<Object> optionalItem = service.findById(id);
         if (optionalItem.isPresent()) {
@@ -81,7 +90,9 @@ public class ItemController {
     @PostMapping("/updateItem/{previous}")
     public String updateItem(@ModelAttribute Item item,
                              @PathVariable("previous") String previous,
-                             Model model) {
+                             Model model,
+                             HttpSession session) {
+        addUserAttribute(model, session);
         String result;
         service.update(item);
         if ("details".equals(previous)) {
@@ -98,7 +109,9 @@ public class ItemController {
     @PostMapping("/changeStatus/{itemId}/{itemStatus}")
     public String changeStatus(Model model,
                                @PathVariable("itemId") long id,
-                               @PathVariable("itemStatus") String status) {
+                               @PathVariable("itemStatus") String status,
+                               HttpSession session) {
+        addUserAttribute(model, session);
         service.changeStatus(id, "false".equals(status));
         model.addAttribute("item", service
                 .findById(id).orElse(new Item()));
@@ -106,7 +119,9 @@ public class ItemController {
     }
 
     @PostMapping("/deleteItem/{itemId}")
-    public String deleteItem(Model model, @PathVariable("itemId") long id) {
+    public String deleteItem(Model model, @PathVariable("itemId") long id,
+                             HttpSession session) {
+        addUserAttribute(model, session);
         service.delete(id);
         loadAllItems(model);
         return "index";
@@ -115,5 +130,14 @@ public class ItemController {
     private void loadAllItems(Model model) {
         model.addAttribute("items", service.getAll());
         model.addAttribute("list", "all");
+    }
+
+    private void addUserAttribute(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            user = new User();
+            user.setName("Гость");
+        }
+        model.addAttribute("user", user);
     }
 }

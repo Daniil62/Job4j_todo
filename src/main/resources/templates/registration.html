@@ -23,8 +23,6 @@
 </head>
 <body>
 <div class="container">
-
-    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Список задач</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -34,36 +32,33 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-item nav-link" th:href="@{|/index/${2}|}">Все</a>
-                <a class="nav-item nav-link" th:href="@{|/index/${0}|}">Новые</a>
-                <a class="nav-item nav-link" th:href="@{|/index/${1}|}">Выполненные</a>
-                <a class="nav-item nav-link" th:if="${user.name != 'Гость'}" th:href="@{/logout}">
-                    <span th:text="${user.name}"></span>
-                    <span> | Выйти</span>
-                </a>
+                <a class="nav-item nav-link" th:href="@{/loginPage}">Войти</a>
             </div>
         </div>
     </nav>
-    <br>
-    <div class="row">
+    <div class="row pt-3">
         <div class="card" style="width: 100%">
             <div class="card-header">
-                Новая задача
+                Регистрация.
+            </div>
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                Пользователь с этим логином уже существует.
+            </div>
+            <div th:if="${empty}" class="alert alert-danger" role="alert">
+                Поля должны быть заполнены,
+                логин и пароль должны содержать от пяти символов.
             </div>
             <div class="card-body">
-                <form th:action="@{/createItem}" method="POST"
-                      enctype="multipart/form-data">
+                <form th:action="@{/registration}" method="POST">
                     <div class="form-group">
-                        <label th:for="header">Заголовок</label>
-                        <input th:type="text" class="form-control"
-                               th:name="header" th:id="header">
-                        <br>
-                        <label for="description">Описание</label>
-                        <textarea type="text" class="form-control"
-                                  name="description" id="description"></textarea>
+                        <label for="name">Имя</label>
+                        <input type="text" class="form-control" name="name" id="name">
+                        <label for="login">Логин</label>
+                        <input type="text" class="form-control" name="login" id="login">
+                        <label for="password">Пароль</label>
+                        <input type="password" class="form-control" name="password" id="password">
                     </div>
-                    <br>
-                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                    <button type="submit" class="btn btn-primary">Готово</button>
                 </form>
             </div>
         </div>

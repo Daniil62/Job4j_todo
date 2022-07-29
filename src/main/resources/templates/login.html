@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -18,15 +18,12 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
             crossorigin="anonymous"></script>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <title>Список задач</title>
 </head>
 <body>
-<div class="container">
+<div class="container pt-3">
 
-    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Список задач</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -36,42 +33,30 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-item nav-link" th:href="@{|/index/${2}|}">Все</a>
-                <a class="nav-item nav-link" th:href="@{|/index/${0}|}">Новые</a>
-                <a class="nav-item nav-link" th:href="@{|/index/${1}|}">Выполненные</a>
-                <a class="nav-item nav-link" th:if="${user.name != 'Гость'}" th:href="@{/logout}">
-                    <span th:text="${user.name}"></span>
-                    <span> | Выйти</span>
-                </a>
+                <a class="nav-item nav-link" th:href="@{/formRegistration}">Регистрация</a>
             </div>
         </div>
     </nav>
-    <br>
+
     <div class="row">
-        <div class="info" style="width: 100%" th:object="${item}">
+        <div class="card" style="width: 100%">
             <div class="card-header">
-                Задача
-                <a th:href="@{|/editItemForm/${item.id}/${'details'}|}"><i class="fa fa-edit"></i></a>
+                Авторизация
             </div>
-            <br>
-            <div th:text="${item.header}"></div>
-            <br>
-            <div th:text="${item.description}"></div>
-            <br>
-            <div th:text="${item.created}"></div>
-            <br>
-            <div class="controls">
-                <form th:action="@{|/changeStatus/${item.id}/${item.done}|}"
-                      method="POST" enctype="multipart/form-data">
-                    <button th:if="${item.done == false}" type="submit"
-                            class="btn btn-primary">Выполнено</button>
-                    <button th:if="${item.done == true}" type="submit"
-                            class="btn btn-primary">Возобновить</button>
-                </form>
-                <br>
-                <form th:action="@{|/deleteItem/${item.id}|}"
-                      method="POST" enctype="multipart/form-data">
-                    <button type="submit" class="btn btn-primary">Удалить</button>
+            <div class="card-body">
+                <div th:if="${fail}" class="alert alert-danger" role="alert">
+                    Логин или пароль введены неверно!
+                </div>
+                <form th:action="@{/login}" method="POST">
+                    <div class="form-group">
+                        <label>Логин</label>
+                        <input type="text" class="form-control" name="login">
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль</label>
+                        <input type="password" class="form-control" name="password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Войти</button>
                 </form>
             </div>
         </div>

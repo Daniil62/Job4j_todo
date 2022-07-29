@@ -47,11 +47,21 @@
                    th:href="@{|/index/${1}|}"><u><b>Выполненные</b></u></a>
                 <a class="nav-item nav-link" th:if="${list != 'old'}"
                    th:href="@{|/index/${1}|}">Выполненные</a>
+                <a class="nav-item nav-link" th:if="${user.name == 'Гость'}"
+                   th:href="@{/formRegistration}">Регистрация</a>
+                <a class="nav-item nav-link" th:if="${user.name == 'Гость'}" th:href="@{/loginPage}">
+                    <span th:text="${user.name}"></span>
+                    <span> | Войти</span>
+                </a>
+                <a class="nav-item nav-link" th:if="${user.name != 'Гость'}" th:href="@{/logout}">
+                    <span th:text="${user.name}"></span>
+                    <span> | Выйти</span>
+                </a>
             </div>
         </div>
     </nav>
     <br>
-    <div class="row">
+    <div th:if="${user.name != 'Гость'}" class="row">
         <table class="table">
             <thead>
             <tr>
@@ -76,6 +86,10 @@
         <form th:action="@{/addItemForm}" method="GET">
             <button type="submit" class="btn btn-primary">Новая задача</button>
         </form>
+    </div>
+    <div th:if="${user.name == 'Гость'}">
+        <br>
+        <h1><div th:text="@{Войдите, или зарегистрируйтесь}"></div></h1>
     </div>
 </div>
 </body>
