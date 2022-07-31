@@ -1,6 +1,5 @@
 package ru.job4j.todo.persistence;
 
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Item;
@@ -12,24 +11,18 @@ import java.util.Optional;
 @Repository
 public class ItemHqlStore {
 
-    private final SessionFactory factory;
+    private final QueryExecutor executor;
 
     public ItemHqlStore(SessionFactory factory) {
-        this.factory = factory;
+        executor = new QueryExecutor(factory);
     }
 
     public void add(Item item) {
-        Session session = factory.openSession();
-        session.beginTransaction();
-        session.save(item);
-        session.getTransaction().commit();
-        session.close();
+        executor.execute(session -> session.save(item));
     }
 
     public boolean update(Item item) {
-        Session session = factory.openSession();
-        session.beginTransaction();
-        boolean result = session.createQuery(
+        return executor.execute(session -> session.createQuery(
                 "update Item i set i.header = :newHeader,"
                         + " i.description = :newDescription, "
                         + "i.created = :newCreated where id = :fId")
@@ -37,28 +30,15 @@ public class ItemHqlStore {
                 .setParameter("newDescription", item.getDescription())
                 .setParameter("newCreated", LocalDate.now())
                 .setParameter("fId", item.getId())
-                .executeUpdate() > 0;
-        session.getTransaction().commit();
-        session.close();
-        return result;
+                .executeUpdate() > 0);
     }
 
     public Optional<Object> findById(long id) {
-        Session session = factory.openSession();
-        session.beginTransaction();
-        Optional<Object> result = Optional.of(session.get(Item.class, id));
-        session.getTransaction().commit();
-        session.close();
-        return result;
+        return Optional.of(executor.execute(session -> session.get(Item.class, id)));
     }
 
     public List<Item> getAll() {
-        Session session = factory.openSession();
-        session.beginTransaction();
-        List result = session.createQuery("from Item").list();
-        session.getTransaction().commit();
-        session.close();
-        return result;
+        return executor.execute(session -> session.createQuery("from Item").list());
     }
 
     public List<Item> getPerformed() {
@@ -70,37 +50,24 @@ public class ItemHqlStore {
     }
 
     private List<Item> findItemsByStatus(boolean status) {
-        Session session = factory.openSession();
-        session.beginTransaction();
-        List result = session
+        return executor.execute(session -> session
                 .createQuery("from Item where done = :d")
                 .setParameter("d", status)
-                .list();
-        session.getTransaction().commit();
-        session.close();
-        return result;
+                .list());
     }
 
     public void changeItemStatus(long id, boolean status) {
-        Session session = factory.openSession();
-        session.beginTransaction();
-        session.createQuery(
+        executor.execute(session -> session.createQuery(
                 "update Item i set i.done = :newStatus "
                         + "where id = :fId")
                 .setParameter("fId", id)
                 .setParameter("newStatus", status)
-                .executeUpdate();
-        session.getTransaction().commit();
-        session.close();
+                .executeUpdate());
     }
 
     public boolean delete(long id) {
-        Session session = factory.openSession();
-        session.beginTransaction();
-        boolean result = session.createQuery("delete from Item where id = :fId")
+        return executor.execute(session -> session.createQuery("delete from Item where id = :fId")
                 .setParameter("fId", id)
-                .executeUpdate() > 0;
-        session.close();
-        return result;
+                .executeUpdate() > 0);
     }
 }
