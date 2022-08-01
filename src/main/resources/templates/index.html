@@ -68,6 +68,7 @@
                 <th scope="col">Задача</th>
                 <th scope="col">Дата</th>
                 <th scope="col">Статус</th>
+                <th scope="col">Автор</th>
             </tr>
             </thead>
             <tbody>
@@ -76,6 +77,7 @@
                 <td th:text="${item.created}"></td>
                 <td th:if="${item.done}" th:text="Выполнена"></td>
                 <td th:if="${!item.done}" th:text="Новая"></td>
+                <td th:text="${item.user.name}"></td>
                 <td><a th:href="@{|/itemDetails/${item.id}|}"
                        th:text="смотреть"></a></td>
                 <td><a th:href="@{|/editItemForm/${item.id}/${'main'}|}">

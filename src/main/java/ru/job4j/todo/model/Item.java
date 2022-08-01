@@ -16,16 +16,20 @@ public class Item {
     private String description = "";
     private LocalDate created = LocalDate.now();
     private boolean done;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Item() {
     }
 
-    public Item(long id, String header, String description, LocalDate created, boolean done) {
+    public Item(long id, String header, String description, LocalDate created, boolean done, User user) {
         this.id = id;
         this.header = header;
         this.description = description;
         this.created = created;
         this.done = done;
+        this.user = user;
     }
 
     public long getId() {
@@ -66,6 +70,14 @@ public class Item {
 
     public void setDone(boolean done) {
         this.done = done;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

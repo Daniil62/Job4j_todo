@@ -50,6 +50,7 @@ public class ItemController {
     @PostMapping("/createItem")
     public String createItem(@ModelAttribute Item item, Model model, HttpSession session) {
         addUserAttribute(model, session);
+        item.setUser((User) session.getAttribute("user"));
         service.create(item);
         model.addAttribute("items", service.getUnperformed());
         model.addAttribute("list", "new");
