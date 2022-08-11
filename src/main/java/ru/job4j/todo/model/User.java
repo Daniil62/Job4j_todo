@@ -80,4 +80,11 @@ public class User {
         result *= 31 + login.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        String n = System.lineSeparator();
+        return String.format("User: %s%s id: %d%s login: %s",
+                name, n, id, n, login);
+    }
 }

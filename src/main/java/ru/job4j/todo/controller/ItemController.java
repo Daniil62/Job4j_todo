@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.job4j.todo.model.Item;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.ItemService;
 
 import javax.servlet.http.HttpSession;
@@ -17,9 +18,12 @@ import java.util.Optional;
 public class ItemController {
 
     private final ItemService service;
+    private final CategoryService categoryService;
 
-    public ItemController(ItemService service) {
+    public ItemController(ItemService service,
+                          CategoryService categoryService) {
         this.service = service;
+        this.categoryService = categoryService;
     }
 
     @GetMapping("/index/{status}")
@@ -44,17 +48,21 @@ public class ItemController {
     public String addItem(Model model, HttpSession session) {
         addUserAttribute(model, session);
         model.addAttribute("item", new Item());
+        model.addAttribute("categories", categoryService.getAll());
         return "addItemForm";
     }
 
     @PostMapping("/createItem")
-    public String createItem(@ModelAttribute Item item, Model model, HttpSession session) {
+    public String createItem(@ModelAttribute Item item,
+                             Model model, HttpSession session) {
+        String result;
         addUserAttribute(model, session);
         item.setUser((User) session.getAttribute("user"));
-        service.create(item);
-        model.addAttribute("items", service.getUnperformed());
-        model.addAttribute("list", "new");
-        return "index";
+            service.create(item);
+            model.addAttribute("items", service.getUnperformed());
+            model.addAttribute("list", "new");
+            result = "index";
+        return result;
     }
 
     @GetMapping("/itemDetails/{itemId}")
@@ -81,6 +89,7 @@ public class ItemController {
         if (optionalItem.isPresent()) {
             model.addAttribute("item", optionalItem.get());
             model.addAttribute("previous", previous);
+            model.addAttribute("categories", categoryService.getAll());
         } else {
             loadAllItems(model);
             result = "index";
@@ -91,19 +100,19 @@ public class ItemController {
     @PostMapping("/updateItem/{previous}")
     public String updateItem(@ModelAttribute Item item,
                              @PathVariable("previous") String previous,
-                             Model model,
-                             HttpSession session) {
+                             Model model, HttpSession session) {
         addUserAttribute(model, session);
         String result;
-        service.update(item);
-        if ("details".equals(previous)) {
-            model.addAttribute("item", service
-                    .findById(item.getId()).orElse(new Item()));
-            result = "itemDetails";
-        } else {
-            loadAllItems(model);
-            result = "index";
-        }
+            service.setCategories(item);
+            service.update(item);
+            if ("details".equals(previous)) {
+                model.addAttribute("item", service
+                        .findById(item.getId()).orElse(new Item()));
+                result = "itemDetails";
+            } else {
+                loadAllItems(model);
+                result = "index";
+            }
         return result;
     }
 

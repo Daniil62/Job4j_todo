@@ -2,7 +2,7 @@ package ru.job4j.todo.model;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "items")
@@ -19,6 +19,8 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private final Set<Category> categories = new HashSet<>();
 
     public Item() {
     }
@@ -80,6 +82,23 @@ public class Item {
         this.user = user;
     }
 
+    public void addCategory(Category category) {
+        categories.add(category);
+    }
+
+    public void addCategoryCollection(Category[] array) {
+        Collections.addAll(categories, array);
+    }
+
+    public Set<Category> getCategories() {
+        return Set.copyOf(categories);
+    }
+
+    public void setCategories(Collection<Category> collection) {
+        categories.clear();
+        categories.addAll(collection);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Item)) {
@@ -97,7 +116,9 @@ public class Item {
     public String toString() {
         String n = System.lineSeparator();
         return String.format(
-                " id: %d%s header: %s%s description: %s%s created: %s%s done: %b",
-                id, n, header, n, description, n, created.toString(), n, done);
+                " id: %d%s header: %s%s description: %s%s created: %s"
+                        + "%s done: %b%s author: %s%s categories: %s%s$s",
+                id, n, header, n, description, n, created.toString(),
+                n, done, n, user, n, categories.toString(), n);
     }
 }

@@ -1,9 +1,12 @@
 package ru.job4j.todo.service;
 
 import org.springframework.stereotype.Service;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Item;
+import ru.job4j.todo.persistence.CategoryStore;
 import ru.job4j.todo.persistence.ItemHqlStore;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,17 +14,19 @@ import java.util.Optional;
 public class ItemService {
 
     private final ItemHqlStore store;
+    private final CategoryStore categoryStore;
 
-    public ItemService(ItemHqlStore store) {
+    public ItemService(ItemHqlStore store, CategoryStore categoryStore) {
         this.store = store;
+        this.categoryStore = categoryStore;
     }
 
     public void create(Item item) {
         store.add(item);
     }
 
-    public boolean update(Item item) {
-        return store.update(item);
+    public void update(Item item) {
+        store.update(item);
     }
 
     public List<Item> getAll() {
@@ -46,5 +51,15 @@ public class ItemService {
 
     public boolean delete(long id) {
         return store.delete(id);
+    }
+
+    public void setCategories(Item item) {
+        if (item != null && !item.getCategories().isEmpty()) {
+            final List<Integer> ids = new ArrayList<>();
+            for (Category category : item.getCategories()) {
+                ids.add(category.getId());
+            }
+            item.setCategories(categoryStore.findByIds(ids));
+        }
     }
 }

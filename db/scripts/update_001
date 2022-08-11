@@ -13,3 +13,8 @@ create table if not exists accounts(
     login varchar not null unique,
     password varchar not null
 );
+
+create table if not exists categories(
+    id serial primary key,
+    name varchar not null unique
+);

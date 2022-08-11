@@ -25,25 +25,7 @@
 <div class="container">
 
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Список задач</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse"
-                data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <a class="nav-item nav-link" th:href="@{|/index/${2}|}">Все</a>
-                <a class="nav-item nav-link" th:href="@{|/index/${0}|}">Новые</a>
-                <a class="nav-item nav-link" th:href="@{|/index/${1}|}">Выполненные</a>
-                <a class="nav-item nav-link" th:if="${user.name != 'Гость'}" th:href="@{/logout}">
-                    <span th:text="${user.name}"></span>
-                    <span> | Выйти</span>
-                </a>
-            </div>
-        </div>
-    </nav>
+    <div th:replace="fragments/navbar.html :: navbar"></div>
     <br>
     <div class="row">
         <div class="card" style="width: 100%">
@@ -52,17 +34,19 @@
             </div>
             <div class="card-body">
                 <form th:action="@{/createItem}" method="POST"
-                      enctype="multipart/form-data">
+                      th:object="${item}" enctype="multipart/form-data">
                     <div class="form-group">
                         <label th:for="header">Заголовок</label>
-                        <input th:type="text" class="form-control"
+                        <input th:required="true" th:type="text" class="form-control"
                                th:name="header" th:id="header">
                         <br>
                         <label for="description">Описание</label>
-                        <textarea type="text" class="form-control"
+                        <textarea th:required="true" type="text" class="form-control"
                                   name="description" id="description"></textarea>
+                        <br>
+                        <div th:replace="fragments/categories :: categories_block"></div>
+                        <br>
                     </div>
-                    <br>
                     <button type="submit" class="btn btn-primary">Сохранить</button>
                 </form>
             </div>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div th:fragment="categories_block">
+    <label for="category">Категории:</label>
+    <select th:required="true" class="form-control" id="category" name="category"
+            th:field="*{categories}" multiple="multiple">
+        <option th:each="category : ${categories}"
+                th:value="${category.id}"
+                th:text="${category.name}">
+        </option>
+    </select>
+</div>
+</body>
+</html>
