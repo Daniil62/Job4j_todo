@@ -74,7 +74,7 @@
             <tbody>
             <tr th:each="item: ${items}">
                 <td th:text="${item.header}"></td>
-                <td th:text="${item.created}"></td>
+                <td th:text="${#dates.format(item.created, 'dd.MM.yyyy')}"></td>
                 <td th:if="${item.done}" th:text="Выполнена"></td>
                 <td th:if="${!item.done}" th:text="Новая"></td>
                 <td th:text="${item.user.name}"></td>

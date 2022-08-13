@@ -40,7 +40,7 @@
             <br>
             <div th:text="${item.description}"></div>
             <br>
-            <div th:text="${item.created}"></div>
+            <div th:text="${#dates.format(item.created, 'dd.MM.yyyy')}"></div>
             <br>
             <label><b>Категории:</b>
                 <li th:each="category: ${item.categories}">

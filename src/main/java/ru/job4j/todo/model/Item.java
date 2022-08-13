@@ -1,7 +1,8 @@
 package ru.job4j.todo.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.*;
 
 @Entity
@@ -14,7 +15,9 @@ public class Item {
     private String header = "";
     @Column(columnDefinition = "TEXT")
     private String description = "";
-    private LocalDate created = LocalDate.now();
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date created = new Date(System.currentTimeMillis());
     private boolean done;
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -25,7 +28,7 @@ public class Item {
     public Item() {
     }
 
-    public Item(long id, String header, String description, LocalDate created, boolean done, User user) {
+    public Item(long id, String header, String description, Date created, boolean done, User user) {
         this.id = id;
         this.header = header;
         this.description = description;
@@ -58,11 +61,11 @@ public class Item {
         this.description = description;
     }
 
-    public LocalDate getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(LocalDate created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
