@@ -44,20 +44,21 @@
             <div th:if="${error}" class="alert alert-danger" role="alert">
                 Пользователь с этим логином уже существует.
             </div>
-            <div th:if="${empty}" class="alert alert-danger" role="alert">
-                Поля должны быть заполнены,
-                логин и пароль должны содержать от пяти символов.
-            </div>
             <div class="card-body">
                 <form th:action="@{/registration}" method="POST">
-                    <div class="form-group">
-                        <label for="name">Имя</label>
-                        <input type="text" class="form-control" name="name" id="name">
-                        <label for="login">Логин</label>
-                        <input type="text" class="form-control" name="login" id="login">
-                        <label for="password">Пароль</label>
-                        <input type="password" class="form-control" name="password" id="password">
-                    </div>
+                    <label for="name">Имя</label>
+                    <input th:required="true"
+                           type="text" class="form-control" name="name" id="name">
+                    <br>
+                    <label for="login">Логин</label>
+                    <input th:required="true"
+                           type="text" class="form-control" name="login" id="login">
+                    <br>
+                    <label for="password">Пароль</label>
+                    <input th:required="true"
+                           type="password" class="form-control"
+                           name="password" id="password">
+                    <br>
                     <button type="submit" class="btn btn-primary">Готово</button>
                 </form>
             </div>
